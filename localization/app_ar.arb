@@ -12478,5 +12478,15 @@
   "deleteAccountSuccessClose": "Close",
   "@deleteAccountSuccessClose": {
     "description": "Close button label for delete account success bottom sheet"
-  }
+  },
+  "coreScreensResolvingInputs": "جارٍ تحليل مدخلات المعاملة...",
+  "coreScreensFeeRateLabel": "معدل الرسوم",
+  "coreScreensFeeRateValue": "{rate} sat/vB",
+  "coreScreensChangeOutputUnknown": "مخرج الباقي غير معروف — يتم عرض جميع المخرجات بالتساوي",
+  "coreScreensUnknown": "غير معروف",
+  "coreScreensFetchFailed": "تعذر جلب المعاملة {txid} من Electrum.",
+  "coreScreensInputResolutionFailed": "المدخل غير موجود: المخرج {vout} من {parentTxId} غير موجود.",
+  "coreScreensParseFailed": "فشل تحليل المعاملة: {message}.",
+  "coreScreensUnexpectedError": "خطأ غير متوقع: {message}.",
+  "coreScreensNoServersAvailable": "لا توجد خوادم Electrum متاحة."
 }

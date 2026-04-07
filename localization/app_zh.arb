@@ -4462,5 +4462,15 @@
   "deleteAccountSuccessClose": "Close",
   "@deleteAccountSuccessClose": {
     "description": "Close button label for delete account success bottom sheet"
-  }
+  },
+  "coreScreensResolvingInputs": "正在解析交易输入...",
+  "coreScreensFeeRateLabel": "费率",
+  "coreScreensFeeRateValue": "{rate} sat/vB",
+  "coreScreensChangeOutputUnknown": "找零输出未知 — 所有输出均等显示",
+  "coreScreensUnknown": "未知",
+  "coreScreensFetchFailed": "无法从 Electrum 获取交易 {txid}。",
+  "coreScreensInputResolutionFailed": "未找到输入：{parentTxId} 的输出 {vout} 不存在。",
+  "coreScreensParseFailed": "解析交易失败：{message}。",
+  "coreScreensUnexpectedError": "意外错误：{message}。",
+  "coreScreensNoServersAvailable": "没有可用的 Electrum 服务器。"
 }
