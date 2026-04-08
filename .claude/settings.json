@@ -1,0 +1,18 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash(git commit:*)",
+        "command": "bash -c 'DISK_FREE=$(df -h / | tail -1 | awk \"{print \\$4}\" | sed \"s/Gi//\"); if [ \"${DISK_FREE%%.*}\" -lt 10 ]; then echo \"BLOCK: Only ${DISK_FREE}GB free — clean build artifacts before committing\"; exit 1; fi'",
+        "description": "Block commits when disk is critically low"
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "command": "bash -c 'FILE=\"$CLAUDE_TOOL_ARG_file_path\"; if echo \"$FILE\" | grep -q \"patrol_test/\\|test/\"; then echo \"Test file modified: $FILE — remember to verify with patrol test or flutter test before committing\"; fi'",
+        "description": "Remind to test after editing test files"
+      }
+    ]
+  }
+}
