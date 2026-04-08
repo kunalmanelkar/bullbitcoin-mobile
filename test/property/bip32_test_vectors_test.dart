@@ -198,6 +198,25 @@ void main() {
           reason: 'xpub should be a full Base58 encoded key');
     });
 
+    // REGRESSION TEST: Will pass once upstream fixes testnet WIF byte.
+    // Bug: bip32_derivation.dart:26 uses wif: 0x80 (mainnet) instead of
+    // 0xEF (testnet). Currently no code calls .toWif() so this is latent.
+    // See project_upstream_findings.md Finding 9.
+    test(
+      'getXprvFromSeed for testnet should produce tprv-prefixed key',
+      skip: 'Latent upstream bug: bip32_derivation.dart:26 — testnet WIF byte is 0x80 (mainnet). '
+          'See project_upstream_findings.md Finding 9',
+      () {
+        final xprv = Bip32Derivation.getXprvFromSeed(
+          _hexToBytes('000102030405060708090a0b0c0d0e0f'),
+          Network.bitcoinTestnet,
+        );
+        // Testnet xprv should start with 'tprv' (version 0x04358394)
+        expect(xprv.startsWith('tprv'), isTrue,
+            reason: 'Testnet xprv must use tprv prefix');
+      },
+    );
+
     test('getAccountXpub produces tpub for testnet', () async {
       final keys = await Bip32Derivation.getAccountXpub(
         seedBytes: seed,

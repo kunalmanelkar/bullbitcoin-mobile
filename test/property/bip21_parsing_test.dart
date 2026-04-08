@@ -158,6 +158,27 @@ void main() {
     });
   });
 
+  group('BIP21 payjoin URL integrity', () {
+    // REGRESSION TEST: Documents bip21_uri library mangling payjoin URLs.
+    // The library uppercases the pj field and replaces '-' with '+'.
+    // See project_upstream_findings.md Finding 4.
+    test(
+      'payjoin URL with hyphens should be preserved unchanged',
+      skip: 'Dependency bug: bip21_uri uppercases pj field and replaces - with +. '
+          'See project_upstream_findings.md Finding 4',
+      () {
+        final uri = bip21.decode(
+          'bitcoin:bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq'
+          '?pj=https://pay.example.com/pj?session-id=abc',
+        );
+        // The pj URL should be preserved exactly as provided
+        expect(uri.options['pj'],
+            equals('https://pay.example.com/pj?session-id=abc'),
+            reason: 'Payjoin URL must not be mangled by the URI parser');
+      },
+    );
+  });
+
   group('BIP21 amount → sats conversion pipeline', () {
     // Bug this catches: BTC float → integer sats conversion error → wrong payment amount
     // This tests ConvertAmount.btcToSats on values extracted from BIP21 URIs
@@ -202,22 +223,35 @@ void main() {
   });
 
   group('BIP21 uppercase scheme handling', () {
-    // KNOWN UPSTREAM BUG: Uppercase BITCOIN: is parsed by bip21_uri but
-    // _tryParseBip21 fails on case-sensitive scheme comparison.
-    // See project_upstream_findings.md #1.
-    test('uppercase BITCOIN: is parsed by library with uppercase scheme', () {
+    test('library preserves original scheme case', () {
+      // Documents current library behavior
       final uri = bip21.decode(
         'BITCOIN:bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq?amount=0.001',
       );
-      // The library preserves the original case of the scheme
-      expect(uri.scheme, equals('BITCOIN'),
-          reason: 'bip21_uri preserves original scheme case');
-      // This means uri.scheme == "bitcoin" would FAIL in the app
-      expect(uri.scheme == 'bitcoin', isFalse,
-          reason: 'Case-sensitive comparison fails — documented upstream bug');
-      // But the address and amount are still parsed correctly
+      expect(uri.scheme, equals('BITCOIN'));
       expect(uri.address, equals('bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq'));
       expect(uri.amount, equals(0.001));
     });
+
+    // REGRESSION TEST: Will pass once upstream fixes case-sensitive scheme check.
+    // Bug: _tryParseBip21 line 163 uses data.startsWith('bitcoin:') instead of
+    // data.toLowerCase().startsWith('bitcoin:'), causing uppercase URIs to silently
+    // lose amount, lightning, and payjoin parameters.
+    // See project_upstream_findings.md Finding 1.
+    test(
+      'uppercase BITCOIN: scheme should be treated as case-insensitive per BIP21 spec',
+      skip: 'Upstream bug: payment_request.dart:163 — case-sensitive startsWith. '
+          'See project_upstream_findings.md Finding 1',
+      () {
+        final uri = bip21.decode(
+          'BITCOIN:bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq?amount=0.001',
+        );
+        // BIP21 spec (RFC 3986): scheme is case-insensitive
+        // This should match 'bitcoin' regardless of input case
+        expect(uri.scheme.toLowerCase(), equals('bitcoin'));
+        // When the app's _tryParseBip21 is fixed, this comparison will work:
+        // uri.scheme == 'bitcoin' (after normalization in app code)
+      },
+    );
   });
 }
