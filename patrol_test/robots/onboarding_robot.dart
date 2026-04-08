@@ -52,4 +52,31 @@ class OnboardingRobot extends BaseRobot {
     await tapText(TestStrings.advancedOptions);
     await $.pump(const Duration(seconds: 2));
   }
+
+  /// Verify the recovery method selection screen is visible.
+  ///
+  /// After tapping "Recover Wallet", the app shows:
+  ///   - "Recover your wallet" title
+  ///   - "Encrypted vault" (cloud backup)
+  ///   - "Physical backup" (12-word mnemonic)
+  Future<void> expectRecoveryMethodsVisible() async {
+    final found = await waitForText(
+      TestStrings.recoverYourWallet,
+      timeout: TestTimeouts.standard,
+    );
+
+    if (!found) {
+      // Fallback: check for either recovery method option
+      final hasVault = await waitForText(
+        TestStrings.encryptedVault,
+        timeout: TestTimeouts.quick,
+      );
+      final hasPhysical = await waitForText(
+        TestStrings.physicalBackup,
+        timeout: TestTimeouts.quick,
+      );
+      expect(hasVault || hasPhysical, isTrue,
+          reason: 'Recovery method selection did not appear');
+    }
+  }
 }
