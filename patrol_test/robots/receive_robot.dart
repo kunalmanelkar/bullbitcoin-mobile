@@ -65,7 +65,8 @@ class ReceiveRobot extends BaseRobot {
           data.startsWith('lq1') ||
           data.startsWith('ex1') ||
           data.startsWith('VJL') ||
-          data.length > 30) {
+          data.startsWith('VTp') ||
+          data.startsWith('AzpH')) {
         return true;
       }
     }

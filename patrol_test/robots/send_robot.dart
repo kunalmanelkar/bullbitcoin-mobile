@@ -23,7 +23,7 @@ class SendRobot extends BaseRobot {
   Future<void> expectSendScreenVisible() async {
     // Check for the scan prompt which is always visible on the send screen
     final hasScan = await waitForText(
-      'Scan any Bitcoin',
+      TestStrings.sendScanPrompt,
       timeout: TestTimeouts.standard,
     );
 

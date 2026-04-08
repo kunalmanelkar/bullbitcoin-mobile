@@ -24,6 +24,7 @@ class TestStrings {
 
   // Send screen
   static const sendTitle = 'Send';
+  static const sendScanPrompt = 'Scan any Bitcoin';
   static const sendAddressHint = "Recipient's address or invoice";
   static const sendContinue = 'Continue';
   static const sendSelectAmount = 'Select amount';

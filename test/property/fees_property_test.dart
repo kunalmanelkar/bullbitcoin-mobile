@@ -47,6 +47,7 @@ void main() {
     property(
         'higher relative fee produces higher or equal absolute fee for same size',
         () {
+      // Bug: fee ordering inversion would show wrong fee to user
       forAll(
         combine2(
           integer(min: 0, max: 500),
@@ -54,16 +55,19 @@ void main() {
         ),
         (pair) {
           final (a, b) = pair;
+          const size = 250;
+          final feeA =
+              (NetworkFee.relative(a.toDouble()).toAbsolute(size) as AbsoluteFee)
+                  .value;
+          final feeB =
+              (NetworkFee.relative(b.toDouble()).toAbsolute(size) as AbsoluteFee)
+                  .value;
           if (a > b) {
-            const size = 250;
-            final feeA =
-                (NetworkFee.relative(a.toDouble()).toAbsolute(size) as AbsoluteFee)
-                    .value;
-            final feeB =
-                (NetworkFee.relative(b.toDouble()).toAbsolute(size) as AbsoluteFee)
-                    .value;
             expect(feeA, greaterThanOrEqualTo(feeB),
                 reason: 'Fee ordering violated: rate $a should produce >= fee than rate $b');
+          } else if (a == b) {
+            expect(feeA, equals(feeB),
+                reason: 'Equal rates must produce equal fees: rate $a vs $b');
           }
         },
       );

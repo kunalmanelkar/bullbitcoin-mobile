@@ -35,7 +35,7 @@ void main() {
   );
 
   patrolTest(
-    'receive screen displays a wallet address',
+    'receive screen shows QR display widget',
     ($) async {
       app.main();
       final onboarding = OnboardingRobot($);
@@ -48,9 +48,8 @@ void main() {
       final receive = ReceiveRobot($);
       await receive.expectReceiveScreenVisible();
 
-      final hasAddress = await receive.hasAddressDisplayed();
-      expect(hasAddress, isTrue,
-          reason: 'No wallet address displayed on receive screen');
+      // Verify the QR display widget is present (was orphaned — never called before)
+      await receive.expectQrDisplayVisible();
     },
   );
 
