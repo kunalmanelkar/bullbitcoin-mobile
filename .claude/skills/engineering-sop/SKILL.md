@@ -70,7 +70,9 @@ patrol_test/
 
 ## Fork Workflow
 - `origin` = our fork (push here)
-- `upstream` = SatoshiPortal (pull from here)  
-- Branch: `e2e-test-suite`
+- `upstream` = SatoshiPortal (pull from here)
+- **NEVER commit to fork's `main`** — keep it as pure mirror of upstream
+- All work on feature branches (currently `e2e-test-suite`)
+- When ready to contribute upstream: split into focused sub-branches per PR
 - Push after each phase completion
-- Sync upstream weekly or before major work
+- Sync upstream before major work: `git fetch upstream && git rebase upstream/main`
